@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>iFocus Core: Interactive Demo</title>
+<meta name="description" content="Try iFocus Core with sample data: nutrition, water, supplements, protocols and cycle in one clear record.">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8F6F1; --surface:#FDFCF9; --card:#FFFFFF; --border:#E6E1D6; --border-soft:#EFEBE2;
+  --text:#1D2722; --muted:#6B6F68; --faint:#9A9C94;
+  --primary:#2D6549; --primary-hover:#24543C; --accent:#E3EEE7; --teal:#3E968C;
+  --cal:#E4D6B4; --pro:#2EC4B6; --carb:#F2B33D; --fat:#5B8DEF; --fib:#94C27E; --wat:#7FD1E8;
+  --serif:'Playfair Display',Georgia,serif; --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:6px}
+
+/* Page */
+.top{max-width:1180px;margin:0 auto;padding:22px 24px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text)}
+.brand img{width:30px;height:30px}
+.brand b{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--teal)}
+.brand b span{font-weight:500;color:#6FA8A1}
+.top a.btn{font-size:14px}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff;border-radius:10px;padding:11px 18px;font-weight:600;text-decoration:none;transition:background .18s}
+.btn:hover{background:var(--primary-hover)}
+.btn.ghost{background:transparent;color:var(--primary);border:1px solid var(--border)}
+.btn.ghost:hover{background:var(--accent)}
+
+.stage{max-width:1180px;margin:0 auto;padding:8px 24px 48px;display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:56px;align-items:start}
+.intro .eyebrow{display:inline-flex;gap:8px;align-items:center;font-size:12.5px;color:var(--muted);border:1px solid var(--border);background:var(--surface);border-radius:99px;padding:5px 12px;margin-bottom:18px}
+.intro h1{font-family:var(--serif);font-size:clamp(34px,4.4vw,52px);line-height:1.06;color:var(--primary);font-weight:700;letter-spacing:-.01em}
+.intro p.lead{margin-top:14px;color:var(--muted);font-size:17px;max-width:520px}
+.tour{margin-top:30px;display:flex;flex-direction:column;gap:8px;max-width:560px}
+.step{display:grid;grid-template-columns:30px 1fr;gap:14px;text-align:left;padding:14px 16px;border-radius:var(--r);border:1px solid transparent;transition:background .2s,border-color .2s}
+.step:hover{background:var(--surface)}
+.step.on{background:var(--card);border-color:var(--border);box-shadow:0 1px 2px rgba(30,40,30,.04)}
+.step .num{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);display:grid;place-items:center;font-size:12.5px;font-weight:600;color:var(--muted);background:var(--surface)}
+.step.on .num{background:var(--primary);color:#fff;border-color:var(--primary)}
+.step h3{font-size:15px;font-weight:600}
+.step p{font-size:13.5px;color:var(--muted);margin-top:2px;display:none}
+.step.on p{display:block}
+.step .try{display:none;margin-top:8px;font-size:12.5px;color:var(--primary);font-weight:600}
+.step.on .try{display:block}
+.cta-row{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap}
+.toplinks{display:flex;gap:8px}
+.btn.store{background:#111;color:#fff}
+.btn.store:hover{background:#2a2a2a}
+.getit{margin-top:28px;max-width:560px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px 18px 16px}
+.getit-h{font-family:var(--serif);font-size:19px;font-weight:600;color:var(--primary)}
+.getit .cta-row{margin-top:12px}
+.getit-s{margin-top:10px;font-size:12.5px;color:var(--muted)}
+.endcard{background:var(--primary);color:#fff;border-radius:var(--r);padding:16px 15px;margin-bottom:12px}
+.endcard h5{font-family:var(--serif);font-size:18px;font-weight:600}
+.endcard p{font-size:12.5px;opacity:.85;margin-top:2px}
+.endcard .eb{display:flex;gap:6px;margin-top:12px}
+.endcard a{flex:1;text-align:center;font-size:12.5px;font-weight:600;padding:9px 6px;border-radius:9px;text-decoration:none}
+.endcard a.w{background:#fff;color:var(--primary)}
+.endcard a.s{background:#111;color:#fff}
+@media (max-width:560px){.hide-sm{display:none}}
+.persona{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:18px;font-size:13px;color:var(--muted)}
+.persona a{display:inline-grid;grid-template-columns:auto auto;grid-template-rows:auto auto;column-gap:9px;align-items:center;text-decoration:none;color:var(--text);border:1px solid var(--border);background:var(--surface);border-radius:12px;padding:7px 14px 7px 8px;font-weight:600;transition:background .15s,border-color .15s}
+.persona a small{grid-column:2;font-weight:400;color:var(--muted);font-size:11.5px;line-height:1.2}
+.persona .av{grid-row:1/3;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--primary);font-size:13px}
+.persona a:hover{background:var(--accent)}
+.persona a.on{background:var(--card);border-color:var(--primary);box-shadow:0 0 0 1px var(--primary)}
+.persona a.on .av{background:var(--primary);color:#fff}
+.fine{margin-top:16px;font-size:12px;color:var(--faint);max-width:520px}
+
+/* Phone */
+.phone-wrap{position:sticky;top:20px}
+.phone{width:390px;height:800px;max-height:calc(100vh - 40px);min-height:640px;border-radius:46px;background:#111;padding:11px;box-shadow:0 30px 60px -20px rgba(30,45,35,.35),0 0 0 1px rgba(0,0,0,.06)}
+.screen{position:relative;width:100%;height:100%;border-radius:36px;overflow:hidden;background:var(--bg);display:flex;flex-direction:column}
+.status{height:44px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 26px 0 30px;font-size:14px;font-weight:600}
+.notch{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:108px;height:30px;background:#111;border-radius:20px;z-index:5}
+.sicons{display:flex;gap:5px;align-items:center}
+.view{flex:1;overflow-y:auto;padding:4px 18px 18px;scrollbar-width:none}
+.view::-webkit-scrollbar{display:none}
+.tabbar{flex:none;display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--border);background:rgba(253,252,249,.96);padding:8px 6px 22px}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;color:var(--faint);font-weight:500}
+.tab svg{width:21px;height:21px}
+.tab.on{color:var(--primary)}
+.toast{position:absolute;left:50%;bottom:96px;transform:translate(-50%,12px);background:#1F2B25;color:#fff;font-size:13px;padding:9px 14px;border-radius:10px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap;z-index:9}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* App UI */
+.hello{font-family:var(--serif);font-size:27px;color:var(--teal);font-weight:600;line-height:1.15;margin-top:6px}
+.sub{color:var(--muted);font-size:14px}
+.h2{font-family:var(--serif);font-size:22px;font-weight:600;margin:18px 0 2px}
+.range{font-size:12.5px;color:var(--muted)}
+.seg{display:inline-flex;background:#EEEBE3;border-radius:10px;padding:3px;margin:10px 0 12px}
+.seg button{padding:6px 14px;border-radius:8px;font-size:13px;color:var(--muted);font-weight:500;transition:background .15s,color .15s}
+.seg button.on{background:#fff;color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 15px;margin-bottom:12px}
+.ctitle{display:flex;align-items:center;gap:8px;font-family:var(--serif);font-size:17px;font-weight:600;margin-bottom:9px}
+.ctitle .ico{color:var(--teal);display:flex}
+.ctitle .ico svg{width:17px;height:17px}
+.ctitle .meta{margin-left:auto;font-family:var(--sans);font-size:11.5px;color:var(--muted);font-weight:500}
+.info{width:15px;height:15px;border-radius:50%;border:1px solid var(--faint);color:var(--faint);font:500 9.5px/13px var(--sans);text-align:center;flex:none;position:relative}
+.info:hover::after,.info:focus::after{content:attr(data-tip);position:absolute;left:50%;top:20px;transform:translateX(-50%);width:200px;background:#1F2B25;color:#fff;font-size:11.5px;line-height:1.4;padding:8px 10px;border-radius:8px;z-index:4;text-align:left;font-weight:400}
+.row{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-top:8px}
+.row .l{display:flex;align-items:center;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;flex:none}
+.row .v{color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.avg{display:block;font-size:11px;color:var(--faint)}
+.bar{height:5px;border-radius:5px;margin-top:5px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:5px;transition:width .5s cubic-bezier(.2,.7,.2,1)}
+.link{display:inline-flex;align-items:center;gap:5px;color:var(--teal);font-size:13px;font-weight:600;margin-top:11px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chip{border:1px solid var(--border);border-radius:9px;padding:6px 11px;font-size:12.5px;font-weight:500;background:var(--surface);transition:background .15s,border-color .15s}
+.chip:hover{background:var(--accent);border-color:#CFE0D5}
+.note{font-size:11.5px;color:var(--faint);margin-top:8px}
+.list .it{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--border-soft);font-size:13.5px}
+.list .it:first-child{border-top:0}
+.it .grow{flex:1}
+.it small{display:block;color:var(--muted);font-size:11.5px}
+.check{width:22px;height:22px;border-radius:7px;border:1.5px solid #CFC8B8;display:grid;place-items:center;flex:none;transition:background .15s,border-color .15s}
+.check.on{background:var(--primary);border-color:var(--primary)}
+.check.on::after{content:"";width:10px;height:6px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+.pill{font-size:11px;font-weight:600;border-radius:99px;padding:2px 8px;background:var(--accent);color:var(--primary)}
+.grid6{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px}
+.site{border:1px solid var(--border);border-radius:9px;padding:7px 8px;font-size:11px;color:var(--muted)}
+.site b{display:block;font-size:15px;color:var(--text);font-variant-numeric:tabular-nums}
+.site.last{border-color:var(--teal);background:#EEF7F5}
+.energy{display:flex;align-items:flex-end;gap:7px;height:64px;margin-top:6px}
+.energy div{flex:1;background:#CDE7E3;border-radius:5px 5px 2px 2px;position:relative}
+.energy div span{position:absolute;bottom:-17px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--faint)}
+.search{display:flex;align-items:center;gap:8px;border:1px solid var(--border);background:#fff;border-radius:11px;padding:10px 12px;margin-top:12px}
+.search input{border:0;outline:0;flex:1;background:transparent;font-size:14px}
+.sugg{border:1px solid var(--border);border-radius:11px;background:#fff;margin-top:6px;overflow:hidden}
+.sugg button{display:flex;width:100%;justify-content:space-between;align-items:center;padding:10px 12px;border-top:1px solid var(--border-soft);text-align:left;font-size:13.5px}
+.sugg button:first-child{border-top:0}
+.sugg button:hover{background:var(--accent)}
+.macros{display:flex;gap:8px;font-size:11px;color:var(--muted)}
+.macros i{font-style:normal;display:inline-flex;align-items:center;gap:3px}
+.field{margin-top:10px}
+.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:500}
+.field input,.field select{width:100%;border:1px solid var(--border);border-radius:10px;padding:9px 11px;background:#fff;font-size:14px;font-family:var(--sans)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.save{width:100%;margin-top:14px;justify-content:center}
+.save:disabled{background:#B9C9BF;cursor:not-allowed}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:12px;margin-top:6px}
+.cal .hd{color:var(--faint);font-size:10.5px;font-weight:600;padding-bottom:2px}
+.cal .d{aspect-ratio:1;display:grid;place-items:center;border-radius:9px;position:relative;font-variant-numeric:tabular-nums}
+.cal .d.today{background:var(--primary);color:#fff;font-weight:600}
+.cal .d.dose::after{content:"";position:absolute;bottom:4px;width:5px;height:5px;border-radius:50%;background:var(--pro)}
+.cal .d.today.dose::after{background:#fff}
+.cal .d.out{color:#CFCBC0}
+.legend{display:flex;gap:14px;font-size:11.5px;color:var(--muted);margin-top:10px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.breath{display:grid;place-items:center;padding:6px 0 2px}
+.orb{width:84px;height:84px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#BFE6E0,#7FC4BA);transform:scale(.72);transition:transform 4s ease-in-out}
+.orb.in{transform:scale(1)}
+.bcap{font-size:13px;color:var(--muted);margin-top:8px;text-align:center;min-height:20px}
+.rep h4{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);margin:12px 0 4px;font-weight:600}
+.back{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--teal);font-weight:600;margin-top:4px}
+.hl{animation:pulse 1.6s ease-out 1}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(62,150,140,.45)}100%{box-shadow:0 0 0 12px rgba(62,150,140,0)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+footer{max-width:1180px;margin:0 auto;padding:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+footer a{color:var(--muted)}
+
+@media (max-width:960px){
+  .stage{grid-template-columns:1fr;gap:28px}
+  .phone-wrap{position:static;display:flex;justify-content:center;order:-1}
+  .intro{order:0}
+}
+@media (max-width:440px){
+  .top{padding:16px}
+  .stage{padding:4px 12px 40px}
+  .phone{width:100%;height:760px;border-radius:40px;padding:8px}
+  .screen{border-radius:33px}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="https://core.ifocusapp.co.uk" aria-label="iFocus Core home">
+    <img src="logo.svg" alt="">
+    <b>iFocus <span>Core</span></b>
+  </a>
+  <nav class="toplinks" aria-label="Get iFocus Core">
+    <a class="btn ghost hide-sm" href="https://apps.apple.com/app/id6810488086">App Store</a>
+    <a class="btn" href="https://core.ifocusapp.co.uk">Start your 7-day free trial</a>
+  </nav>
+</header>
+
+<main class="stage">
+  <section class="intro">
+    <div class="eyebrow">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M10 8l6 4-6 4z" fill="currentColor"/></svg>
+      Interactive demo with sample data
+    </div>
+    <h1>Your daily health routines, clearly organised.</h1>
+    <div class="persona" role="radiogroup" aria-label="Choose a demo">
+      <span>Choose a demo:</span>
+      <a href="?persona=alex" role="radio" data-pk="alex"><b class="av">A</b>Alex<small>Mounjaro · strength focus</small></a>
+      <a href="?persona=gem" role="radio" data-pk="gem"><b class="av">G</b>Gem<small>Wegovy · balanced routine</small></a>
+    </div>
+    <p class="lead">Take a two-minute tour. Tap through the phone as if it were yours: everything responds, and nothing is saved.</p>
+
+    <div class="tour" id="tour" role="list"></div>
+
+    <div class="getit">
+      <div class="getit-h">Try it free for 7 days, on the web or iPhone</div>
+      <div class="cta-row">
+        <a class="btn" href="https://core.ifocusapp.co.uk">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>
+          Start free on the web</a>
+        <a class="btn store" href="https://apps.apple.com/app/id6810488086">
+          <svg width="16" height="18" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+          Download on the App Store</a>
+      </div>
+      <div class="getit-s">Sign in with the same account on both. £0 today, cancel any time before the trial ends.</div>
+    </div>
+    <p class="fine">This demo uses fictional sample data for <span id="pname">Alex</span>. iFocus Core is a tracking and organisation tool. It does not diagnose conditions, prescribe treatment or replace professional medical advice.</p>
+  </section>
+
+  <div class="phone-wrap">
+    <div class="phone" aria-label="iFocus Core app demo">
+      <div class="screen">
+        <div class="notch"></div>
+        <div class="status"><span id="clock">9:41</span>
+          <span class="sicons">
+            <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="7" width="3" height="4" rx="1" fill="currentColor"/><rect x="4.5" y="5" width="3" height="6" rx="1" fill="currentColor"/><rect x="9" y="2.5" width="3" height="8.5" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="1" fill="currentColor"/></svg>
+            <svg width="25" height="12" viewBox="0 0 25 12"><rect x=".5" y=".5" width="21" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="16" height="8" rx="1.8" fill="currentColor"/><rect x="22.5" y="4" width="1.6" height="4" rx=".8" fill="currentColor" opacity=".4"/></svg>
+          </span>
+        </div>
+        <div class="view" id="view" tabindex="-1"></div>
+        <nav class="tabbar" id="tabbar" aria-label="App sections"></nav>
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span>© 2026 Ifocusapp Ltd. Demo only, sample data.</span>
+  <span><a href="https://core.ifocusapp.co.uk">Web app</a> · <a href="https://apps.apple.com/app/id6810488086">App Store</a> · <a href="https://core.ifocusapp.co.uk/privacy">Privacy</a> · <a href="https://core.ifocusapp.co.uk/terms">Terms</a> · <a href="https://core.ifocusapp.co.uk/support">Support</a></span>
+</footer>
+
+<script>
+(function(){
+/* ---------- Icons ---------- */
+const I={
+ home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>',
+ food:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7 3v8M4 3v5a3 3 0 006 0V3M7 11v10M17 3c-2 2-3 5-3 8h3v10"/></svg>',
+ vit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-35 12 12.5)"/><path d="M9.5 8.5l5 7"/></svg>',
+ prot:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 3l3 3M16 5l3 3M14 7l-8 8-2 5 5-2 8-8M10 11l3 3"/></svg>',
+ cyc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+ drop:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3s6 6.5 6 11a6 6 0 01-12 0c0-4.5 6-11 6-11z"/></svg>',
+ leaf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 19c0-8 5-14 15-14 0 10-6 15-14 15"/><path d="M5 19l7-7"/></svg>',
+ rep:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg>',
+ search:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
+ arrow:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+ chev:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>',
+ calm:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M8.5 13.5c1 1.3 2.2 2 3.5 2s2.5-.7 3.5-2"/></svg>'
+};
+
+/* ---------- Dates ---------- */
+const DAY=864e5;
+const now=new Date(); const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+const key=d=>d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+const addDays=(d,n)=>new Date(d.getFullYear(),d.getMonth(),d.getDate()+n);
+const fmt=(d,o)=>d.toLocaleDateString('en-GB',o).replace('Sept','Sep');
+function periodRange(p){
+  if(p==='day') return [today,today];
+  if(p==='week'){const dow=(today.getDay()+6)%7; return [addDays(today,-dow),today];}
+  return [new Date(today.getFullYear(),today.getMonth(),1),today];
+}
+function daysIn(p){const [a,b]=periodRange(p);return Math.round((b-a)/DAY)+1;}
+function eachDay(p){const [a,b]=periodRange(p);const out=[];for(let d=a;d<=b;d=addDays(d,1))out.push(d);return out;}
+function rangeLabel(p){
+  const [a,b]=periodRange(p);
+  if(p==='day') return fmt(b,{weekday:'long',day:'numeric',month:'long'});
+  if(p==='month') return fmt(b,{month:'long',year:'numeric'});
+  return a.getMonth()===b.getMonth()? `${a.getDate()}–${fmt(b,{day:'numeric',month:'short'})}` : `${fmt(a,{day:'numeric',month:'short'})}–${fmt(b,{day:'numeric',month:'short'})}`;
+}
+
+/* ---------- Personas ---------- */
+const PERSONAS={
+ alex:{name:'Alex',seed:7,T:{kcal:2000,pro:140,carb:180,fat:65,fib:30,wat:2000},base:{kcal:[1650,450],pro:[108,38],carb:[140,55],fat:[52,18],fib:[20,11],wat:[1400,900]},
+  meals:[['Breakfast',6],['Breakfast',10],['Lunch',3],['Lunch',2],['Lunch',1]],water:[250,500],
+  supps:[['Vitamin D3','1,000 IU · morning',1],['Omega-3','1 g · with lunch',1],['Magnesium glycinate','200 mg · evening',0],['Creatine','5 g · any time',0]],
+  prot:{n:'Mounjaro (tirzepatide)',short:'Mounjaro',cat:'GLP-1',dose:'5 mg'},energy:[3,4,4,3,4,5,4,4],lastReset:6},
+ gem:{name:'Gem',seed:23,T:{kcal:1700,pro:110,carb:160,fat:55,fib:28,wat:2000},base:{kcal:[1380,380],pro:[86,30],carb:[125,50],fat:[44,16],fib:[19,10],wat:[1500,800]},
+  meals:[['Breakfast',7],['Breakfast',10],['Lunch',4],['Lunch',17],['Lunch',0]],water:[500,250,250],
+  supps:[['Vitamin D3','1,000 IU · morning',1],['Iron','14 mg · with breakfast',1],['Omega-3','1 g · with lunch',0],['Magnesium glycinate','200 mg · evening',0]],
+  prot:{n:'Wegovy (semaglutide)',short:'Wegovy',cat:'GLP-1',dose:'1 mg'},energy:[4,3,4,4,5,4,3,4],lastReset:9}
+};
+const PK=(new URLSearchParams(location.search).get('persona')||'alex').toLowerCase()==='gem'?'gem':'alex';
+const P=PERSONAS[PK];
+
+/* ---------- Sample data ---------- */
+let seed=P.seed; const rnd=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646;};
+const T=P.T;
+const FOODS=[
+ {n:'Spinach, raw',p:'100 g',kcal:25,pro:2.8,carb:1.6,fat:.8,fib:2.1},
+ {n:'Broccoli, boiled',p:'100 g',kcal:24,pro:3.1,carb:1.1,fat:.8,fib:2.3},
+ {n:'Sweet potato, baked',p:'150 g',kcal:173,pro:2.4,carb:41,fat:.5,fib:5},
+ {n:'Chicken breast, grilled',p:'150 g',kcal:222,pro:48,carb:0,fat:3.3,fib:0},
+ {n:'Salmon fillet, baked',p:'130 g',kcal:280,pro:30,carb:0,fat:17.6,fib:0},
+ {n:'Eggs, boiled',p:'2 eggs',kcal:143,pro:12.6,carb:.8,fat:10,fib:0},
+ {n:'Porridge oats with milk',p:'1 bowl',kcal:240,pro:10,carb:36,fat:6,fib:4},
+ {n:'Greek yoghurt, 0% fat',p:'170 g',kcal:100,pro:17,carb:6,fat:0,fib:0},
+ {n:'Avocado',p:'½ fruit',kcal:120,pro:1.5,carb:1.4,fat:12,fib:4.9},
+ {n:'Brown rice, cooked',p:'150 g',kcal:198,pro:4.1,carb:42,fat:1.4,fib:2.7},
+ {n:'Blueberries',p:'80 g',kcal:46,pro:.6,carb:11,fat:.3,fib:1.9},
+ {n:'Lentils, boiled',p:'150 g',kcal:174,pro:13.5,carb:30,fat:.6,fib:11.4},
+ {n:'Banana',p:'1 medium',kcal:105,pro:1.3,carb:27,fat:.4,fib:3.1},
+ {n:'Almonds',p:'30 g',kcal:174,pro:6.3,carb:2.1,fat:15,fib:3.8},
+ {n:'Cottage cheese',p:'100 g',kcal:98,pro:11,carb:3.4,fat:4.3,fib:0},
+ {n:'Tuna, tinned in water',p:'1 tin',kcal:120,pro:27,carb:0,fat:1,fib:0},
+ {n:'Wholemeal bread',p:'1 slice',kcal:95,pro:4.5,carb:16,fat:1.2,fib:2.8},
+ {n:'Quinoa, cooked',p:'150 g',kcal:180,pro:6.6,carb:32,fat:2.9,fib:4.2}
+];
+const days={};
+for(let i=40;i>=1;i--){
+  const d=addDays(today,-i);
+  const B=P.base;days[key(d)]={kcal:Math.round(B.kcal[0]+rnd()*B.kcal[1]),pro:Math.round(B.pro[0]+rnd()*B.pro[1]),carb:Math.round(B.carb[0]+rnd()*B.carb[1]),fat:Math.round(B.fat[0]+rnd()*B.fat[1]),fib:Math.round(B.fib[0]+rnd()*B.fib[1]),wat:Math.round((B.wat[0]+rnd()*B.wat[1])/50)*50,meals:[]};
+}
+const todayMeals=P.meals.map(([t,i])=>({t,...FOODS[i]}));
+const td={kcal:0,pro:0,carb:0,fat:0,fib:0,wat:P.water.reduce((a,b)=>a+b,0),meals:todayMeals.slice(),drinks:P.water.slice()};
+todayMeals.forEach(m=>['kcal','pro','carb','fat','fib'].forEach(k=>td[k]+=m[k]));
+days[key(today)]=td;
+
+const SUPPS=P.supps.map(([n,d,on])=>({n,d,on:!!on}));
+const suppHist={}; for(let i=40;i>=1;i--){suppHist[key(addDays(today,-i))]=rnd()>.18?4:3;}
+
+const SITES=['Abdomen L','Abdomen R','Thigh L','Thigh R','Arm L','Arm R'];
+const doses=[]; // weekly Mounjaro on the same weekday as 2 days ago
+for(let w=0;w<8;w++){const d=addDays(today,-2-7*w);doses.push({d,site:SITES[(7-w)%6],energy:P.energy[w]});}
+const protocols=[{n:P.prot.n,cat:P.prot.cat,dose:P.prot.dose,cycle:'Weekly',next:addDays(today,5)}];
+
+/* ---------- State ---------- */
+const S={tab:'overview',period:'week',sub:null,step:0,form:{name:'',cat:'',cycle:'',dose:'',unit:'mg'},q:'',breathing:false};
+
+/* ---------- Tour ---------- */
+const STEPS=[
+ {t:'See your day, week or month',p:'Switch between Day, Week and Month. Every card updates: totals, targets for the days so far, and your daily average.',try:'Try it: tap Week, then Month.',go:()=>{S.tab='overview';S.sub=null;},focus:'#seg'},
+ {t:'Log water in a tap',p:'Set your own target and add drinks in one tap. Drinks always count towards today, whichever view you\'re in.',try:'Try it: tap +250 ml.',go:()=>{S.tab='overview';S.sub=null;},focus:'#water'},
+ {t:'Find everyday foods fast',p:'Smart search for everyday foods with their macros. Search, tap, done. Your macro colours update straight away.',try:'Try it: search "spinach" or "sweet potato".',go:()=>{S.tab='food';S.sub=null;},focus:'#q'},
+ {t:'Tick off your supplements',p:'A simple daily checklist for vitamins and supplements, with your consistency over the week.',try:'Try it: tick Magnesium.',go:()=>{S.tab='vitamins';S.sub=null;},focus:'#supps'},
+ {t:'Track protocols and doses',p:'Track GLP-1 medicines such as Mounjaro and Wegovy, hormones, or your own protocol, with injection site rotation and optional reminders.',try:'Try it: tap a preset and add a dose amount.',go:()=>{S.tab='protocols';S.sub=null;},focus:'#presets'},
+ {t:'Everything on one calendar',p:'Doses, logging days and cycle context in one monthly view.',try:'Dots mark dose days.',go:()=>{S.tab='cycle';S.sub=null;},focus:'#calcard'},
+ {t:'Take a Wellbeing Reset',p:'A short, optional breathing pause. Gentle nudges you can adjust or turn off.',try:'Try it: tap Start.',go:()=>{S.tab='overview';S.sub='reset';},focus:'#breath'},
+ {t:'Share a clinician-ready report',p:'A clear summary of your records to bring to an appointment, if you choose to share it.',try:'Scroll the report.',go:()=>{S.tab='overview';S.sub='report';},focus:'#report'}
+];
+const tourEl=document.getElementById('tour');
+function renderTour(){
+  tourEl.innerHTML=STEPS.map((s,i)=>`<button class="step${i===S.step?' on':''}" data-step="${i}" role="listitem" aria-current="${i===S.step}">
+    <span class="num">${i+1}</span><span><h3>${s.t}</h3><p>${s.p}</p><span class="try">${s.try}</span></span></button>`).join('');
+}
+tourEl.addEventListener('click',e=>{const b=e.target.closest('[data-step]');if(!b)return;goStep(+b.dataset.step);});
+function goStep(i){S.step=i;STEPS[i].go();renderTour();render();const f=STEPS[i].focus;setTimeout(()=>{const el=document.querySelector(f);if(el){const card=el.closest('.card')||el;const vr=view.getBoundingClientRect(),cr=card.getBoundingClientRect();view.scrollTo({top:view.scrollTop+cr.top-vr.top-Math.max(12,(vr.height-cr.height)/2),behavior:'smooth'});card.classList.remove('hl');void card.offsetWidth;card.classList.add('hl');}},60);}
+
+/* ---------- Helpers ---------- */
+const view=document.getElementById('view');
+const nf=n=>Math.round(n).toLocaleString('en-GB');
+function sumPeriod(p){const o={kcal:0,pro:0,carb:0,fat:0,fib:0,wat:0,logged:0};eachDay(p).forEach(d=>{const x=days[key(d)];if(!x)return;['kcal','pro','carb','fat','fib','wat'].forEach(k=>o[k]+=x[k]);if(x.kcal>0)o.logged++;});return o;}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),1800);}
+const info=t=>`<span class="info" tabindex="0" role="img" aria-label="${t}" data-tip="${t}">i</span>`;
+function mrow(label,color,val,target,unit,p,n){
+  const pct=Math.min(100,val/target*100);
+  const avg=p!=='day'?`<span class="avg">avg ${nf(val/n)}${unit==='kcal'?' kcal':unit}/day</span>`:'';
+  return `<div class="row"><span class="l"><span class="dot" style="background:${color}"></span>${label}</span><span class="v">${nf(val)}${unit==='kcal'?' kcal':unit} / ${nf(target)}${unit==='kcal'?' kcal':unit}${avg}</span></div>
+  <div class="bar" style="background:${color}33"><i style="width:${pct}%;background:${color}"></i></div>`;
+}
+const periodWord={day:'today',week:'this week',month:'this month'};
+
+/* ---------- Screens ---------- */
+function overview(){
+  if(S.sub==='reset') return resetView();
+  if(S.sub==='report') return reportView();
+  const p=S.period,n=daysIn(p),s=sumPeriod(p);
+  const h=now.getHours(); const greet=h<12?'Good morning':h<18?'Good afternoon':'Good evening';
+  const suppTaken=eachDay(p).reduce((a,d)=>a+(key(d)===key(today)?SUPPS.filter(x=>x.on).length:(suppHist[key(d)]||0)),0);
+  const pDoses=doses.filter(x=>x.d>=periodRange(p)[0]&&x.d<=today);
+  const expected=p==='day'?0:Math.max(1,Math.round(n/7));
+  return `
+  <div class="hello">${greet}, ${P.name}.</div><div class="sub">Ready to check in.</div>
+  <div class="h2">Overview</div><div class="range">${rangeLabel(p)}</div>
+  <div class="seg" id="seg" role="tablist" aria-label="Period">${['day','week','month'].map(x=>`<button role="tab" aria-selected="${x===p}" class="${x===p?'on':''}" data-period="${x}">${x[0].toUpperCase()+x.slice(1)}</button>`).join('')}</div>
+
+  <div class="card"><div class="ctitle"><span class="ico">${I.food}</span>Nutrition ${info(p==='day'?'Today\'s totals against your daily targets.':`Totals ${periodWord[p]} against your daily targets × ${n} days so far.`)}</div>
+    ${mrow('Calories','var(--cal)',s.kcal,T.kcal*n,'kcal',p,n)}
+    ${mrow('Protein','var(--pro)',s.pro,T.pro*n,'g',p,n)}
+    ${mrow('Carbs','var(--carb)',s.carb,T.carb*n,'g',p,n)}
+    ${mrow('Fat','var(--fat)',s.fat,T.fat*n,'g',p,n)}
+    ${mrow('Fibre','var(--fib)',s.fib,T.fib*n,'g',p,n)}
+    ${mrow('Water','var(--wat)',s.wat,T.wat*n,' ml',p,n)}
+    <button class="link" data-tab="food">Open Food & Macros ${I.arrow}</button></div>
+
+  <div class="card" id="water"><div class="ctitle"><span class="ico">${I.drop}</span>Water intake ${info('Drinks you add always count towards today.')}</div>
+    ${mrow('Water','var(--wat)',s.wat,T.wat*n,' ml',p,n)}
+    <div class="chips"><button class="chip" data-drink="250">+250 ml</button><button class="chip" data-drink="500">+500 ml</button><button class="chip" data-drink="undo">Undo last</button></div>
+    ${p!=='day'?'<div class="note">Adds to today</div>':''}</div>
+
+  <div class="card"><div class="ctitle"><span class="ico">${I.vit}</span>Vitamins & Supplements<span class="meta">${p==='day'?`${SUPPS.filter(x=>x.on).length} of ${SUPPS.length} today`:`${suppTaken} of ${SUPPS.length*n} ${periodWord[p]}`}</span></div>
+    <div class="bar" style="background:var(--accent)"><i style="width:${Math.round((p==='day'?SUPPS.filter(x=>x.on).length/SUPPS.length:suppTaken/(SUPPS.length*n))*100)}%;background:var(--primary)"></i></div>
+    <button class="link" data-tab="vitamins">Open supplements ${I.arrow}</button></div>
+
+  <div class="card"><div class="ctitle"><span class="ico">${I.prot}</span>Protocols</div>
+    <div class="list">${protocols.map(x=>`<div class="it"><div class="grow">${x.n}<small>${x.dose} · ${x.cycle} · next ${fmt(x.next,{weekday:'short',day:'numeric',month:'short'})}</small></div><span class="pill">${x.cat}</span></div>`).join('')}</div>
+    <button class="link" data-tab="protocols">Open protocols ${I.arrow}</button></div>
+
+  <div class="card"><div class="ctitle"><span class="ico">${I.rep}</span>Clinician Report</div>
+    <div class="sub" style="font-size:13px">A clear summary to bring to your next appointment.</div>
+    <button class="link" data-sub="report">Open report ${I.arrow}</button></div>
+
+  <div class="card"><div class="ctitle"><span class="ico">${I.calm}</span>Wellbeing Reset</div>
+    <div class="sub" style="font-size:13px">A one-minute breathing pause. Last reset ${P.lastReset} days ago.</div>
+    <button class="link" data-sub="reset">Start ${I.arrow}</button></div>
+
+  <div class="card"><div class="ctitle">Protocol Consistency<span class="meta">${p==='day'?'Today':p==='week'?'This week':'This month'}</span></div>
+    ${p==='day'?`<div class="sub" style="font-size:13px">No dose due today. Next: ${fmt(protocols[0].next,{weekday:'long'})}.</div>`:
+    `<div class="row"><span class="l">Doses logged</span><span class="v">${pDoses.length} of ${Math.max(expected,pDoses.length)}</span></div><div class="bar" style="background:var(--accent)"><i style="width:${Math.min(100,pDoses.length/Math.max(expected,pDoses.length)*100)}%;background:var(--primary)"></i></div>`}</div>
+
+  <div class="card"><div class="ctitle">Site Rotation ${info('Shows how often each site was used. The last site used is highlighted.')}</div>
+    <div class="grid6">${SITES.map(st=>{const c=doses.filter(x=>x.site===st).length;return `<div class="site${doses[0].site===st?' last':''}"><b>${c}</b>${st}</div>`}).join('')}</div></div>
+
+  <div class="card"><div class="ctitle">Energy at Administration ${info('Your self-rated energy (1–5) at each dose.')}</div>
+    <div class="energy" aria-label="Energy ratings for the last 8 doses">${doses.slice().reverse().map(x=>`<div style="height:${x.energy*20}%"><span>${fmt(x.d,{day:'numeric',month:'numeric'})}</span></div>`).join('')}</div><div style="height:18px"></div></div>`;
+}
+function foodView(){
+  const q=S.q.trim().toLowerCase();
+  const res=q?FOODS.filter(f=>f.n.toLowerCase().includes(q)).slice(0,6):[];
+  const groups={};td.meals.forEach((m,i)=>{(groups[m.t]=groups[m.t]||[]).push({...m,i});});
+  return `<div class="h2" style="margin-top:8px">Food & Macros</div><div class="range">${fmt(today,{weekday:'long',day:'numeric',month:'long'})}</div>
+  <div class="search">${I.search}<input id="q" type="search" placeholder="Search foods, e.g. spinach" value="${S.q.replace(/"/g,'&quot;')}" autocomplete="off" aria-label="Search foods"></div>
+  ${q?(res.length?`<div class="sugg">${res.map(f=>`<button data-add="${FOODS.indexOf(f)}"><span>${f.n}<span class="macros"><i><span class="dot" style="background:var(--pro)"></span>${f.pro}g</i><i><span class="dot" style="background:var(--carb)"></span>${f.carb}g</i><i><span class="dot" style="background:var(--fat)"></span>${f.fat}g</i></span></span><span class="v" style="color:var(--muted);font-size:12px">${f.p} · ${f.kcal} kcal</span></button>`).join('')}</div>`:`<div class="note">No matches in the demo list. Try spinach, salmon or oats.</div>`):`<div class="chips">${['Spinach','Broccoli','Sweet potato','Salmon','Eggs'].map(x=>`<button class="chip" data-q="${x}">${x}</button>`).join('')}</div>`}
+  <div class="card" style="margin-top:12px"><div class="ctitle">Today</div>
+    ${mrow('Calories','var(--cal)',td.kcal,T.kcal,'kcal','day',1)}
+    ${mrow('Protein','var(--pro)',td.pro,T.pro,'g','day',1)}
+    ${mrow('Carbs','var(--carb)',td.carb,T.carb,'g','day',1)}
+    ${mrow('Fat','var(--fat)',td.fat,T.fat,'g','day',1)}
+    ${mrow('Fibre','var(--fib)',td.fib,T.fib,'g','day',1)}</div>
+  ${Object.keys(groups).map(g=>`<div class="card"><div class="ctitle">${g}</div><div class="list">${groups[g].map(m=>`<div class="it"><div class="grow">${m.n}<small>${m.p}</small></div><span class="v" style="font-size:12.5px;color:var(--muted)">${nf(m.kcal)} kcal</span></div>`).join('')}</div></div>`).join('')}`;
+}
+function vitView(){
+  const wk=eachDay('week');const taken=wk.reduce((a,d)=>a+(key(d)===key(today)?SUPPS.filter(x=>x.on).length:(suppHist[key(d)]||0)),0);
+  return `<div class="h2" style="margin-top:8px">Supplements</div><div class="range">${fmt(today,{weekday:'long',day:'numeric',month:'long'})}</div>
+  <div class="card" id="supps" style="margin-top:12px"><div class="ctitle">Today<span class="meta">${SUPPS.filter(x=>x.on).length} of ${SUPPS.length}</span></div>
+  <div class="list">${SUPPS.map((s,i)=>`<div class="it"><button class="check${s.on?' on':''}" data-supp="${i}" role="checkbox" aria-checked="${s.on}" aria-label="${s.n}"></button><div class="grow">${s.n}<small>${s.d}</small></div></div>`).join('')}</div></div>
+  <div class="card"><div class="ctitle">This week<span class="meta">${taken} of ${SUPPS.length*wk.length} taken</span></div>
+  <div class="bar" style="background:var(--accent)"><i style="width:${taken/(SUPPS.length*wk.length)*100}%;background:var(--primary)"></i></div>
+  <div class="note">Doses taken against doses planned, Monday to today.</div></div>`;
+}
+function protView(){
+  const f=S.form; const ok=f.name.trim()&&f.cycle&&Number(f.dose)>0;
+  const presets=[['Mounjaro (tirzepatide)','GLP-1','mg'],['Wegovy (semaglutide)','GLP-1','mg'],['Testosterone','Hormones','mg'],['Insulin','Hormones','units']];
+  return `<div class="h2" style="margin-top:8px">Protocols & Doses</div>
+  <div class="card" style="margin-top:12px"><div class="ctitle">Active</div><div class="list">${protocols.map(x=>`<div class="it"><div class="grow">${x.n}<small>${x.dose} · ${x.cycle}</small></div><span class="pill">${x.cat}</span></div>`).join('')}</div></div>
+  <div class="card"><div class="ctitle">Add a protocol</div>
+    <div class="chips" id="presets">${presets.map((p,i)=>`<button class="chip" data-preset="${i}">${p[0].split(' (')[0]}</button>`).join('')}</div>
+    <div class="note">Presets fill in the name, category and unit only. You add your own dose.</div>
+    <div class="field"><label for="fn">Name</label><input id="fn" data-f="name" value="${f.name}" placeholder="e.g. Mounjaro (tirzepatide)"></div>
+    <div class="two"><div class="field"><label for="fc">Category</label><input id="fc" data-f="cat" value="${f.cat}" placeholder="e.g. GLP-1"></div>
+    <div class="field"><label for="fy">Cycle</label><select id="fy" data-f="cycle"><option value="">Choose</option>${['Daily','Weekly','Every 2 weeks','Monthly'].map(c=>`<option${f.cycle===c?' selected':''}>${c}</option>`).join('')}</select></div></div>
+    <div class="two"><div class="field"><label for="fd">Dose amount</label><input id="fd" data-f="dose" inputmode="decimal" value="${f.dose}" placeholder="0"></div>
+    <div class="field"><label for="fu">Unit</label><input id="fu" data-f="unit" value="${f.unit}"></div></div>
+    <div class="field"><label class="l" style="display:flex;align-items:center;gap:8px;color:var(--text);font-size:13px"><span class="check on" aria-hidden="true"></span>Remind me when a dose is due</label></div>
+    <button class="btn save" id="saveP" ${ok?'':'disabled'}>Save protocol</button>
+    <div class="note">For tracking only. Always follow your prescriber's or pharmacist's instructions.</div></div>`;
+}
+function cycView(){
+  const y=today.getFullYear(),m=today.getMonth();const first=new Date(y,m,1);const off=(first.getDay()+6)%7;const dim=new Date(y,m+1,0).getDate();
+  const doseKeys=new Set(doses.map(x=>key(x.d)));const next=key(protocols[0].next);
+  let cells='';['M','T','W','T','F','S','S'].forEach(h=>cells+=`<div class="hd">${h}</div>`);
+  for(let i=0;i<off;i++){const d=new Date(y,m,i-off+1);cells+=`<div class="d out${doseKeys.has(key(d))?' dose':''}">${d.getDate()}</div>`;}
+  for(let i=1;i<=dim;i++){const d=new Date(y,m,i);const k=key(d);cells+=`<div class="d${k===key(today)?' today':''}${doseKeys.has(k)||k===next||(d>today&&(Math.round((d-protocols[0].next)/DAY)%7===0))?' dose':''}">${i}</div>`;}
+  return `<div class="h2" style="margin-top:8px">Cycle Calendar</div><div class="range">${fmt(today,{month:'long',year:'numeric'})}</div>
+  <div class="card" id="calcard" style="margin-top:12px">${'<div class="cal">'+cells+'</div>'}
+  <div class="legend"><span><span class="dot" style="background:var(--pro)"></span>Dose day</span><span><span class="dot" style="background:var(--primary)"></span>Today</span></div></div>
+  <div class="card"><div class="ctitle">Coming up</div><div class="list"><div class="it"><div class="grow">${P.prot.short} ${P.prot.dose}<small>${fmt(protocols[0].next,{weekday:'long',day:'numeric',month:'long'})} · suggested site: ${SITES[(SITES.indexOf(doses[0].site)+1)%6]}</small></div></div></div></div>`;
+}
+function resetView(){
+  return `<button class="back" data-sub="">${I.chev} Overview</button><div class="h2">Wellbeing Reset</div><div class="range">One minute. Breathe with the circle.</div>
+  <div class="card" id="breath" style="margin-top:12px"><div class="breath"><div class="orb" id="orb"></div><div class="bcap" id="bcap">Tap Start when you're ready</div></div>
+  <button class="btn save" id="breathBtn">${S.breathing?'Stop':'Start'}</button></div>
+  <div class="card"><div class="ctitle">Gentle nudges</div><div class="chips">${['7 days','14 days','21 days','Off'].map((x,i)=>`<button class="chip" ${i===0?'style="background:var(--accent);border-color:#CFE0D5"':''}>${x}</button>`).join('')}</div><div class="note">An in-app reminder if you haven't taken a reset in a while. Never more than once a week.</div></div>`;
+}
+function reportView(){
+  const s=sumPeriod('month'),n=daysIn('month');const w=sumPeriod('week'),wn=daysIn('week');
+  return `<button class="back" data-sub="">${I.chev} Overview</button><div class="h2">Clinician Report</div><div class="range">Prepared ${fmt(today,{day:'numeric',month:'long',year:'numeric'})} · sample data</div>
+  <div class="card rep" id="report" style="margin-top:12px">
+   <h4>Current protocols</h4><div class="list"><div class="it"><div class="grow">${P.prot.n} ${P.prot.dose}<small>Weekly · last dose ${fmt(doses[0].d,{day:'numeric',month:'short'})}, ${doses[0].site}</small></div></div></div>
+   <h4>Dose adherence (last 8 weeks)</h4><div class="row" style="margin-top:0"><span class="l">Doses logged on schedule</span><span class="v">8 of 8</span></div>
+   <h4>Nutrition, daily average this week</h4>
+   <div class="row" style="margin-top:0"><span class="l"><span class="dot" style="background:var(--cal)"></span>Calories</span><span class="v">${nf(w.kcal/wn)} kcal</span></div>
+   <div class="row"><span class="l"><span class="dot" style="background:var(--pro)"></span>Protein</span><span class="v">${nf(w.pro/wn)} g</span></div>
+   <div class="row"><span class="l"><span class="dot" style="background:var(--fib)"></span>Fibre</span><span class="v">${nf(w.fib/wn)} g</span></div>
+   <div class="row"><span class="l"><span class="dot" style="background:var(--wat)"></span>Water</span><span class="v">${nf(w.wat/wn)} ml</span></div>
+   <h4>Supplements</h4><div class="sub" style="font-size:13px">${SUPPS.map(x=>x.n).join(', ')}</div>
+   <h4>Energy at administration</h4><div class="sub" style="font-size:13px">Average ${(doses.reduce((a,x)=>a+x.energy,0)/doses.length).toFixed(1)} out of 5 across the last 8 doses</div>
+   <div class="note" style="margin-top:14px">Self-reported records for discussion with a healthcare professional. Not a diagnosis or treatment plan.</div>
+  </div>
+  <div class="endcard"><h5>Make it yours, free for 7 days</h5><p>Sign in with the same account on the web or iPhone.</p>
+   <div class="eb"><a class="w" href="https://core.ifocusapp.co.uk" target="_blank" rel="noopener">Start on the web</a><a class="s" href="https://apps.apple.com/app/id6810488086" target="_blank" rel="noopener">App Store</a></div></div>`;
+}
+
+/* ---------- Render ---------- */
+const TABS=[['overview','Overview',I.home],['food','Food',I.food],['vitamins','Vitamins',I.vit],['protocols','Protocols',I.prot],['cycle','Cycle',I.cyc]];
+const tabbar=document.getElementById('tabbar');
+function render(keepScroll){
+  const st=view.scrollTop;
+  view.innerHTML=({overview,food:foodView,vitamins:vitView,protocols:protView,cycle:cycView})[S.tab]();
+  tabbar.innerHTML=TABS.map(([k,l,ic])=>`<button class="tab${S.tab===k?' on':''}" data-tab="${k}" aria-current="${S.tab===k}">${ic}${l}</button>`).join('');
+  if(keepScroll) view.scrollTop=st; else view.scrollTop=0;
+}
+function syncStep(){const map={overview:S.sub==='reset'?6:S.sub==='report'?7:(S.step===1?1:0),food:2,vitamins:3,protocols:4,cycle:5};const n=map[S.tab];if(n!==S.step){S.step=n;renderTour();}}
+
+document.querySelector('.screen').addEventListener('click',e=>{
+  const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.tab){S.tab=t.dataset.tab;S.sub=null;stopBreath();render();syncStep();return;}
+  if('sub' in t.dataset){S.sub=t.dataset.sub||null;S.tab='overview';stopBreath();render();syncStep();return;}
+  if(t.dataset.period){S.period=t.dataset.period;render(true);return;}
+  if(t.dataset.drink){
+    if(t.dataset.drink==='undo'){const v=td.drinks.pop();if(v){td.wat-=v;toast(`Removed ${v} ml from today`);}else toast('No drinks to undo today');}
+    else{const v=+t.dataset.drink;td.wat+=v;td.drinks.push(v);toast(`${v} ml added to today`);}
+    render(true);return;}
+  if(t.dataset.q){S.q=t.dataset.q;render(true);const q=document.getElementById('q');q.focus();q.setSelectionRange(q.value.length,q.value.length);return;}
+  if(t.dataset.add){const f=FOODS[+t.dataset.add];const h=now.getHours();const meal=h<11?'Breakfast':h<15?'Lunch':h<21?'Dinner':'Snacks';td.meals.push({t:meal,...f});['kcal','pro','carb','fat','fib'].forEach(k=>td[k]+=f[k]);S.q='';toast(`${f.n.split(',')[0]} added to ${meal.toLowerCase()}`);render(true);return;}
+  if(t.dataset.supp){const s=SUPPS[+t.dataset.supp];s.on=!s.on;toast(s.on?`${s.n} ticked`:`${s.n} unticked`);render(true);return;}
+  if(t.dataset.preset){const p=[['Mounjaro (tirzepatide)','GLP-1','mg'],['Wegovy (semaglutide)','GLP-1','mg'],['Testosterone','Hormones','mg'],['Insulin','Hormones','units']][+t.dataset.preset];S.form={...S.form,name:p[0],cat:p[1],unit:p[2]};render(true);document.getElementById('fd').focus();return;}
+  if(t.id==='saveP'){const f=S.form;protocols.push({n:f.name,cat:f.cat||'Custom',dose:`${f.dose} ${f.unit}`,cycle:f.cycle,next:addDays(today,1)});toast('Protocol saved · reminder set');S.form={name:'',cat:'',cycle:'',dose:'',unit:'mg'};render();return;}
+  if(t.id==='breathBtn'){S.breathing?stopBreath():startBreath();return;}
+});
+view.addEventListener('input',e=>{
+  if(e.target.id==='q'){S.q=e.target.value;const pos=e.target.selectionStart;render(true);const q=document.getElementById('q');q.focus();q.setSelectionRange(pos,pos);return;}
+  const k=e.target.dataset.f;if(k){S.form[k]=e.target.value;const f=S.form;document.getElementById('saveP').disabled=!(f.name.trim()&&f.cycle&&Number(f.dose)>0);}
+});
+view.addEventListener('change',e=>{const k=e.target.dataset.f;if(k){S.form[k]=e.target.value;const f=S.form;document.getElementById('saveP').disabled=!(f.name.trim()&&f.cycle&&Number(f.dose)>0);}});
+
+/* Breathing */
+let bt=null,bLeft=0;
+function startBreath(){S.breathing=true;bLeft=60;const b=document.getElementById('breathBtn');b.textContent='Stop';cycle();bt=setInterval(()=>{bLeft--;if(bLeft<=0){stopBreath(true);}},1000);}
+function cycle(){if(!S.breathing)return;const o=document.getElementById('orb'),c=document.getElementById('bcap');if(!o)return;o.classList.add('in');c.textContent='Breathe in…';setTimeout(()=>{if(!S.breathing||!document.getElementById('orb'))return;o.classList.remove('in');c.textContent='Breathe out…';setTimeout(cycle,4000);},4000);}
+function stopBreath(done){if(!S.breathing)return;S.breathing=false;clearInterval(bt);const b=document.getElementById('breathBtn'),c=document.getElementById('bcap'),o=document.getElementById('orb');if(b)b.textContent='Start';if(o)o.classList.remove('in');if(c)c.textContent=done?'Nicely done. Reset logged for today.':'Tap Start when you\'re ready';if(done)toast('Wellbeing Reset complete');}
+
+/* Clock */
+function tick(){const d=new Date();document.getElementById('clock').textContent=d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');}
+tick();setInterval(tick,30000);
+
+document.querySelectorAll('.persona a').forEach(a=>{const on=a.dataset.pk===PK;a.classList.toggle('on',on);a.setAttribute('aria-checked',on);});
+document.getElementById('pname').textContent=P.name;
+document.title=`iFocus Core: Interactive Demo (${P.name})`;
+renderTour();render();
+})();
+</script>
+</body>
+</html>
