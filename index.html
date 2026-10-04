@@ -70,6 +70,7 @@ input{font:inherit;color:inherit}
 @media (max-width:560px){.hide-sm{display:none}}
 .persona{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:18px;font-size:13px;color:var(--muted)}
 .persona a{display:inline-grid;grid-template-columns:auto auto;grid-template-rows:auto auto;column-gap:9px;align-items:center;text-decoration:none;color:var(--text);border:1px solid var(--border);background:var(--surface);border-radius:12px;padding:7px 14px 7px 8px;font-weight:600;transition:background .15s,border-color .15s}
+.persona>span{flex-basis:100%}
 .persona a small{grid-column:2;font-weight:400;color:var(--muted);font-size:11.5px;line-height:1.2}
 .persona .av{grid-row:1/3;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--primary);font-size:13px}
 .persona a:hover{background:var(--accent)}
@@ -208,6 +209,7 @@ footer a{color:var(--muted)}
       <span>Choose a demo:</span>
       <a href="?persona=alex" role="radio" data-pk="alex"><b class="av">A</b>Alex<small>Mounjaro · strength focus</small></a>
       <a href="?persona=gem" role="radio" data-pk="gem"><b class="av">G</b>Gem<small>Wegovy · balanced routine</small></a>
+      <a href="?persona=gemma" role="radio" data-pk="gemma"><b class="av">G</b>Gemma<small>Wegovy · busy salon days</small></a>
     </div>
     <p class="lead">Take a two-minute tour. Tap through the phone as if it were yours: everything responds, and nothing is saved.</p>
 
@@ -298,9 +300,13 @@ const PERSONAS={
  gem:{name:'Gem',seed:23,T:{kcal:1700,pro:110,carb:160,fat:55,fib:28,wat:2000},base:{kcal:[1380,380],pro:[86,30],carb:[125,50],fat:[44,16],fib:[19,10],wat:[1500,800]},
   meals:[['Breakfast',7],['Breakfast',10],['Lunch',4],['Lunch',17],['Lunch',0]],water:[500,250,250],
   supps:[['Vitamin D3','1,000 IU · morning',1],['Iron','14 mg · with breakfast',1],['Omega-3','1 g · with lunch',0],['Magnesium glycinate','200 mg · evening',0]],
-  prot:{n:'Wegovy (semaglutide)',short:'Wegovy',cat:'GLP-1',dose:'1 mg'},energy:[4,3,4,4,5,4,3,4],lastReset:9}
+  prot:{n:'Wegovy (semaglutide)',short:'Wegovy',cat:'GLP-1',dose:'1 mg'},energy:[4,3,4,4,5,4,3,4],lastReset:9},
+ gemma:{name:'Gemma',seed:41,T:{kcal:1800,pro:115,carb:170,fat:58,fib:28,wat:2500},base:{kcal:[1450,380],pro:[90,30],carb:[135,50],fat:[46,16],fib:[18,10],wat:[1800,900]},
+  meals:[['Breakfast',8],['Breakfast',10],['Lunch',2],['Lunch',4],['Lunch',17]],water:[500,500,250],
+  supps:[['Vitamin D3','1,000 IU · morning',1],['Vitamin B12','1,000 mcg · with breakfast',1],['Collagen','10 g · in coffee',1],['Magnesium glycinate','200 mg · evening',0]],
+  prot:{n:'Wegovy (semaglutide)',short:'Wegovy',cat:'GLP-1',dose:'1.7 mg'},energy:[3,4,4,5,4,4,5,4],lastReset:4}
 };
-const PK=(new URLSearchParams(location.search).get('persona')||'alex').toLowerCase()==='gem'?'gem':'alex';
+const PK=(()=>{const q=(new URLSearchParams(location.search).get('persona')||'alex').toLowerCase();return PERSONAS[q]?q:'alex'})();
 const P=PERSONAS[PK];
 
 /* ---------- Sample data ---------- */
