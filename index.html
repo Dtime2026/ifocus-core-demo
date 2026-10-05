@@ -209,7 +209,6 @@ footer a{color:var(--muted)}
       <span>Choose a demo:</span>
       <a href="?persona=alex" role="radio" data-pk="alex"><b class="av">A</b>Alex<small>Mounjaro · strength focus</small></a>
       <a href="?persona=gem" role="radio" data-pk="gem"><b class="av">G</b>Gem<small>Wegovy · balanced routine</small></a>
-      <a href="?persona=gemma" role="radio" data-pk="gemma"><b class="av">G</b>Gemma<small>Wegovy · busy salon days</small></a>
     </div>
     <p class="lead">Take a two-minute tour. Tap through the phone as if it were yours: everything responds, and nothing is saved.</p>
 
@@ -300,13 +299,10 @@ const PERSONAS={
  gem:{name:'Gem',seed:23,T:{kcal:1700,pro:110,carb:160,fat:55,fib:28,wat:2000},base:{kcal:[1380,380],pro:[86,30],carb:[125,50],fat:[44,16],fib:[19,10],wat:[1500,800]},
   meals:[['Breakfast',7],['Breakfast',10],['Lunch',4],['Lunch',17],['Lunch',0]],water:[500,250,250],
   supps:[['Vitamin D3','1,000 IU · morning',1],['Iron','14 mg · with breakfast',1],['Omega-3','1 g · with lunch',0],['Magnesium glycinate','200 mg · evening',0]],
-  prot:{n:'Wegovy (semaglutide)',short:'Wegovy',cat:'GLP-1',dose:'1 mg'},energy:[4,3,4,4,5,4,3,4],lastReset:9},
- gemma:{name:'Gemma',seed:41,T:{kcal:1800,pro:115,carb:170,fat:58,fib:28,wat:2500},base:{kcal:[1450,380],pro:[90,30],carb:[135,50],fat:[46,16],fib:[18,10],wat:[1800,900]},
-  meals:[['Breakfast',8],['Breakfast',10],['Lunch',2],['Lunch',4],['Lunch',17]],water:[500,500,250],
-  supps:[['Vitamin D3','1,000 IU · morning',1],['Vitamin B12','1,000 mcg · with breakfast',1],['Collagen','10 g · in coffee',1],['Magnesium glycinate','200 mg · evening',0]],
-  prot:{n:'Wegovy (semaglutide)',short:'Wegovy',cat:'GLP-1',dose:'1.7 mg'},energy:[3,4,4,5,4,4,5,4],lastReset:4}
+  prot:{n:'Wegovy (semaglutide)',short:'Wegovy',cat:'GLP-1',dose:'1 mg'},energy:[4,3,4,4,5,4,3,4],lastReset:9}
 };
-const PK=(()=>{const q=(new URLSearchParams(location.search).get('persona')||'alex').toLowerCase();return PERSONAS[q]?q:'alex'})();
+const ONLY=(new URLSearchParams(location.search).get('only')||'').toLowerCase();
+const PK=(()=>{const q=(ONLY||new URLSearchParams(location.search).get('persona')||'alex').toLowerCase();return PERSONAS[q]?q:'alex'})();
 const P={...PERSONAS[PK]};
 {const nm=(new URLSearchParams(location.search).get('name')||'').replace(/[^\p{L}\s'\-]/gu,'').trim().slice(0,20);
  if(nm){P.name=nm.split(/\s+/).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');}}
@@ -562,6 +558,7 @@ function stopBreath(done){if(!S.breathing)return;S.breathing=false;clearInterval
 function tick(){const d=new Date();document.getElementById('clock').textContent=d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');}
 tick();setInterval(tick,30000);
 
+if(ONLY||!new URLSearchParams(location.search).has('all')){const pe=document.querySelector('.persona');if(pe)pe.remove();}
 document.querySelectorAll('.persona a').forEach(a=>{const nq=new URLSearchParams(location.search).get('name');if(nq)a.href='?persona='+a.dataset.pk+'&name='+encodeURIComponent(nq);const on=a.dataset.pk===PK;a.classList.toggle('on',on);a.setAttribute('aria-checked',on);});
 document.getElementById('pname').textContent=P.name;
 document.title=`iFocus Core: Interactive Demo (${P.name})`;
